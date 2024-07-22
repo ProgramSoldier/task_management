@@ -1,0 +1,30 @@
+.up-nav{
+    background-color: #161F6D;
+    min-height: 60px;
+    height: 8vh;
+    display: flex;
+    justify-content: space-between;
+}
+
+
+
+.nav-buttons{
+   display: flex;
+   justify-content:row;
+}
+
+
+
+.nav-btn{
+    background-color: #3498db;
+    color: #fff;
+    padding: 2%, 3%;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    height: 60%;
+    width: 50px;
+    margin: 1.5vh;
+    text-align: center;
+}

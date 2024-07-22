@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <link type="text/css" rel="stylesheet" href="{% static 'mainApp\CSS\base.css'%}">
+        {% block styles %}
+        {% endblock %}
+        <title>Главная страница</title>
+    </head>
+    <body>
+        <nav class="up-nav">
+            <div class="logo">
+                Меню управления
+            </div>
+            <div class="nav-buttons">
+                <div class="nav-btn">
+                    <a href="{% url 'project' %}">Ваши проекты</a>
+                </div>
+                <div class="nav-btn">
+                    {% if request.user.is_authenticated %}
+                        <a href="{% url 'login_account' %}">{{request.user.username}}</a>
+                    {% else %}
+                          <a href="{% url 'login_account' %}">Войти</a>
+                    {% endif %}
+                </div>
+            </div>
+        </nav>
+        {% block main %}
+        {% endblock %}
+    </body>
+</html>

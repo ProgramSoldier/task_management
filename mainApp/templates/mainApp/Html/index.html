@@ -1,0 +1,17 @@
+{% extends "mainApp/HTML/base.html" %}
+{% load static%}
+
+{% block styles %}
+    <link type="text/css" rel="stylesheet" href="{% static 'mainApp\CSS\index.css'%}">
+{% endblock %}
+
+{% block main %}
+    <div class="base-container">
+        <div class="side-menu">
+            Боковое меню
+        </div>
+        <div class="main-container">
+            Основное меню
+        </div>
+    </div>
+{% endblock %}

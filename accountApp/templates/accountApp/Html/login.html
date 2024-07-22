@@ -1,0 +1,26 @@
+{% extends "mainApp/HTML/base.html" %}
+{% load static%}
+
+{% block styles %}
+    <link type="text/css" rel="stylesheet" href="{% static 'accountApp\CSS\login.css'%}">
+{% endblock %}
+
+{% block main %}
+    <div class="base-container">
+        <div class="auth-container">
+            <form method="post">
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+                {% for field in form %}
+                    <p class="form-label">{{ field.label }}</p>
+                    <p>{{ field }}</p>
+                {% endfor %}
+                <button type="submit" class="btn btn-outline-success">Войти</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
