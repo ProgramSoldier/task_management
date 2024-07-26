@@ -19,11 +19,31 @@
         <div class="main-container">
             {% if request.user.is_authenticated %}
                 {% if title_project %}
-                    <ol>
                         {% for task in tasks_project %}
-                            <li>{{ task.title }}</li>
+                            <div class="task-container">
+                                <div class="title">{{ task.title }}</div>
+                                <div >
+                                    {% if task.comment == '' %}
+                                        Нет комментариев
+                                    {% else %}
+                                        Комментарий
+                                    {% endif %}
+                                </div>
+                                <div> Дедлайн: {{task.deadline}}</div>
+                                <div>
+                                    {% if task.user is None %}
+                                        Нет исполнителя
+                                        <form class="getWorkForm" method="post" action="{% url 'project' title_project %}">
+                                            {% csrf_token %}
+                                            <input type="hidden"  name="task-id" value="{{task.pk}}">
+                                            <button type="submit" class="btn" onclick="generateBlank({{task.pk}})">Взять на исполнение</button>
+                                        </form>
+                                    {% else %}
+                                        Исполнитель: {{task.user}}
+                                    {% endif %}
+                                </div>
+                            </div>
                         {% endfor %}
-                    </ol>
                 {% else %}
                     Выберите проект
                 {% endif %}
@@ -32,4 +52,30 @@
             {% endif %}
         </div>
     </div>
+{% endblock %}
+
+{% block js %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+          $('.getWorkForm').submit(function () {
+              $.ajax({
+                  data: $(this).serialize(),
+                  type: $(this).attr('method'),
+                  url:  $(this).attr('action'),
+                  // если успешно, то
+                  success: function (response) {
+                      alert("Спасибо, что обратились к нам {{request.user.username}}");
+                  },
+                  // если ошибка, то
+                  error: function (response) {
+                      // предупредим об ошибке
+                      alert(response.responseJSON.errors);
+                      console.log(response.responseJSON.errors)
+                  }
+              });
+              return false;
+          });
+      })
+    </script>
 {% endblock %}

@@ -8,6 +8,7 @@ class ProjectModel(models.Model):
     def __str__(self):
         return self.title
 
+    objects = models.Manager()
 
 class TaskModel(models.Model):
     title = models.CharField(max_length=180)
@@ -20,6 +21,7 @@ class TaskModel(models.Model):
     def __str__(self):
         return f'Название: {self.title} Проект: {self.project.title}'
 
+    objects = models.Manager()
 
 class Project_UserModel(models.Model):
     project = models.ForeignKey(ProjectModel, on_delete=models.CASCADE)
@@ -32,3 +34,4 @@ class Project_UserModel(models.Model):
             res += ' АВТОР'
         return res
 
+    objects = models.Manager()

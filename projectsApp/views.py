@@ -1,5 +1,8 @@
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.shortcuts import render
 from django.views.generic import View
+from rest_framework.response import Response
+
 from .models import *
 
 
@@ -18,3 +21,17 @@ class ProjectView(View):
             context['projects'] = projects
             context['title_project'] = title_project
         return render(request, self.template_name, context=context)
+
+
+
+
+    def post(self, request, title_project=None, *args, **kwargs):
+        data = request.POST
+        print(data)
+        #TaskModel.objects.filter(pk=data['task-id']).update(user=request.user)
+        #print(TaskModel.objects.get(pk=data['task-id']).user)
+        return JsonResponse({1:1}, status=200)
+
+
+def test(request):
+    return JsonResponse({}, status=200)

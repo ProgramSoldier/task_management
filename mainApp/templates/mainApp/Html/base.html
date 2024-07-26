@@ -14,19 +14,30 @@
                 Меню управления
             </div>
             <div class="nav-buttons">
-                <div class="nav-btn">
-                    <a href="{% url 'project' %}">Ваши проекты</a>
-                </div>
-                <div class="nav-btn">
-                    {% if request.user.is_authenticated %}
-                        <a href="{% url 'login_account' %}">{{request.user.username}}</a>
-                    {% else %}
-                          <a href="{% url 'login_account' %}">Войти</a>
-                    {% endif %}
+                <a href="{% url 'project' %}">
+                    <button class="nav-btn">Ваши<br/> проекты</button>
+                </a>
+                {% if request.user.is_authenticated %}
+                    <a href="{% url 'login' %}">
+                        <button class="nav-btn">{{request.user.username}}</button>
+                    </a>
+                   <form action="{% url 'logout' %}" method="post">
+                       {% csrf_token %}
+                       <button class="nav-btn">Выйти</button>
+                   </form>
+                {% else %}
+                    <a href="{% url 'login' %}">
+                        <button class="nav-btn">Войти</button>
+                    </a>
+                {% endif %}
                 </div>
             </div>
         </nav>
         {% block main %}
         {% endblock %}
     </body>
+
+
+    {% block js%}
+    {% endblock %}
 </html>
