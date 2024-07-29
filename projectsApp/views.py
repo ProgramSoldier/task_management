@@ -16,8 +16,10 @@ class ProjectView(View):
             if title_project:
                 activ_project_id = ProjectModel.objects.get(title=title_project).pk
                 if projects:
-                    tasks_project = TaskModel.objects.filter(project__title=title_project).select_related("project")
+                    tasks_project = TaskModel.objects.filter(project__title=title_project).select_related("project", "user").order_by('deadline','title')
                     context['tasks_project'] = tasks_project
+                    for i in tasks_project:
+                        print(i.dat, i.title)
             context['projects'] = projects
             context['title_project'] = title_project
         return render(request, self.template_name, context=context)
@@ -28,9 +30,8 @@ class ProjectView(View):
     def post(self, request, title_project=None, *args, **kwargs):
         data = request.POST
         print(data)
-        #TaskModel.objects.filter(pk=data['task-id']).update(user=request.user)
-        #print(TaskModel.objects.get(pk=data['task-id']).user)
-        return JsonResponse({1:1}, status=200)
+        TaskModel.objects.filter(pk=data['task-id']).update(user=request.user)
+        return JsonResponse({}, status=200)
 
 
 def test(request):
