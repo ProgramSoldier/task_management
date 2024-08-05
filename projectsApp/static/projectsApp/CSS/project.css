@@ -5,10 +5,23 @@
 }
 
 .side-menu{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
     background-color: #00ABE1;
     width: 15%;
     overflow:auto;
     word-break: break-all;
+
+    p{
+        text-align: center;
+    }
+}
+
+.project-btn{
+        margin: 1vh;
+        background-color: #161F6D;
+        padding: 1vh 5vh;
 }
 
 .main-container{
@@ -36,3 +49,12 @@
 .task-container .title{
     width: 20%;
 }
+
+.modal-btn{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+
+

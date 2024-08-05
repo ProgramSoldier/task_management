@@ -9,9 +9,19 @@
     <div class="base-container">
         <div class="side-menu">
             {% if request.user.is_authenticated %}
-                {% for project in projects %}
-                    <p><a href="{% url 'project' project.project.title %}" >{{project.project.title}}</a></p>
-                {% endfor %}
+                <p> Ваши проекты: </p>
+                {% if projects %}
+                    {% for project in projects %}
+                        <a href="{% url 'project' project.project.title %}" class="a-btn project-btn">
+                            <div>
+                                {{project.project.title}}
+                            </div>
+                        </a>
+                    {% endfor %}
+                {% else %}
+                    <p> Вы ещё не состоите ни в каком проекте </p>
+                {% endif %}
+                <button type="submit" class="a-btn project-btn" id="btnShowModal">+</button>
             {% else %}
                 <p>Пожалуйста, авторизуйтесь на сайте для просмотра ваших проектов</p>
             {% endif %}
@@ -19,6 +29,9 @@
         <div class="main-container">
             {% if request.user.is_authenticated %}
                 {% if title_project %}
+                    <div>
+                        <button id="addTask"> Добавить задачу</button>
+                    </div>
                     {% for task in tasks_project %}
                         <div class="task-container" id="task-container-{{ forloop.counter }}">
                             <div class="title">{{ task.title }}</div>
@@ -53,6 +66,15 @@
             {% endif %}
         </div>
     </div>
+    <dialog id="modal">
+        <form method="post" id="addProject" action="{% url 'addProject' %}">{% csrf_token %}</form>
+        <label>Название проекта:</label>
+        <input type="text" form="addProject" name="title"/> <br>
+        <div class="modal-btn">
+            <button type="submit" form="addProject" class="a-btn project-btn">Создать проект</button>
+            <button type="submit" class="a-btn project-btn">Отмена</button>
+        </div>
+    </dialog>
 {% endblock %}
 
 {% block js %}
@@ -75,6 +97,33 @@
                 return false;
             });
         })
+
+        const modalElement = document.getElementById("modal");
+        $("#addProject").submit(function(e){
+            $.ajax({
+                data: $(this).serialize(),
+                type: 'POST',
+                url:  $(this).attr('action'),
+                success: function(response){
+                    modalElement.close();
+                    let btn = document.getElementById('btnShowModal');
+
+                    let newBtn = document.createElement('a');
+                    newBtn.setAttribute('class', 'a-btn project-btn');
+                    newBtn.setAttribute('href', response.title + '/');
+                    newBtn.innerHTML = response.title;
+
+                    parent = btn.parentElement;
+                    parent.insertBefore(newBtn, btn);
+                }
+            });
+            return false;
+        });
+
+
+        document.getElementById("btnShowModal").onclick = function(){
+            modalElement.showModal();
+        }
 
     </script>
 {% endblock %}

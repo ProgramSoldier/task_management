@@ -8,19 +8,31 @@
 {% block main %}
     <div class="base-container">
         <div class="auth-container">
-            <form method="post">
-                {% csrf_token %}
-                {% if form.non_field_errors %}
-                    <div class="alert alert-danger">
-                        {{ form.non_field_errors }}
+            {% if request.user.is_authenticated %}
+                <p> Вы уже авторизованны как {{request.user.username}}</p>
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button class="nav-btn">Выйти</button>
+                </form>
+            {% else %}
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="auth-field">
+                        {% for field in form %}
+                            <p class="form-label">{{ field.label }}</p>
+                            <p>{{ field }}</p>
+                        {% endfor %}
                     </div>
-                {% endif %}
-                {% for field in form %}
-                    <p class="form-label">{{ field.label }}</p>
-                    <p>{{ field }}</p>
-                {% endfor %}
-                <button type="submit" class="btn btn-outline-success">Войти</button>
-            </form>
+                    <button type="submit" class="btn btn-outline-success">Войти</button>
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+                </form>
+                <a href="{% url 'register' %}">Зарегистрироваться</a>
+            {% endif %}
+
         </div>
     </div>
 {% endblock %}

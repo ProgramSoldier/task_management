@@ -6,3 +6,35 @@
     align-items: center;
     justify-content: center;
 }
+
+.auth-container{
+    width: 20%;
+    border-style: solid;
+    border-width: 3px;
+    border-color: #00ABE1;
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+}
+.auth-container form{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+}
+.auth-field{
+    width: 70%;
+    flex-direction: column;
+}
+.auth-field p{
+    margin: 10px 0px;
+}
+
+.btn.btn-outline-success{
+    width: 80%;
+    height: 34px;
+}
