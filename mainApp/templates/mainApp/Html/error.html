@@ -1,0 +1,12 @@
+{% extends "mainApp/HTML/base.html" %}
+{% load static%}
+
+{% block styles %}
+    <link type="text/css" rel="stylesheet" href="{% static 'mainApp\CSS\error.css'%}">
+{% endblock %}
+
+{% block main %}
+    <div class="base-container">
+        <p class="err">{{title}}: {{message}}</p>
+    </div>
+{% endblock %}

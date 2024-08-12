@@ -6,7 +6,7 @@ class ProjectModel(models.Model):
     title = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.title
+        return f'{self.id} {self.title}'
 
     objects = models.Manager()
 
@@ -17,6 +17,7 @@ class TaskModel(models.Model):
     comment = models.TextField(null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     project = models.ForeignKey(ProjectModel, on_delete=models.CASCADE)
+    is_ready = models.BooleanField(default=False)
 
     def __str__(self):
         return f'Название: {self.title} Проект: {self.project.title}'

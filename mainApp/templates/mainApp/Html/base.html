@@ -6,6 +6,7 @@
         <link type="text/css" rel="stylesheet" href="{% static 'mainApp\CSS\base.css'%}">
         {% block styles %}
         {% endblock %}
+
         <title>Главная страница</title>
     </head>
     <body>
@@ -31,9 +32,8 @@
         </nav>
         {% block main %}
         {% endblock %}
+        {% block js %}
+        {% endblock %}
     </body>
 
-
-    {% block js%}
-    {% endblock %}
 </html>

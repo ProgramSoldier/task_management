@@ -5,125 +5,126 @@
     <link type="text/css" rel="stylesheet" href="{% static 'projectsApp\CSS\project.css'%}">
 {% endblock %}
 
+{% block js %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="{% static 'projectsApp/JS/project.js' %}"></script>
+{% endblock %}
+
 {% block main %}
+    <input type="hidden" value="{{project_id}}">
     <div class="base-container">
         <div class="side-menu">
             {% if request.user.is_authenticated %}
-                <p> Ваши проекты: </p>
-                {% if projects %}
-                    {% for project in projects %}
-                        <a href="{% url 'project' project.project.title %}" class="a-btn project-btn">
-                            <div>
-                                {{project.project.title}}
-                            </div>
-                        </a>
-                    {% endfor %}
-                {% else %}
-                    <p> Вы ещё не состоите ни в каком проекте </p>
+                <button type="submit" class="a-btn project-btn" id="btnShowModalProject">Добавить проект</button>
+                {% if project_id %}
+                    <details>
+                        <summary>Участники проекта:</summary>
+                        {% for user in users %}
+                            <p>{{user.user__username}}</p>
+                        {% endfor %}
+
+                    </details>
                 {% endif %}
-                <button type="submit" class="a-btn project-btn" id="btnShowModal">+</button>
+                <details>
+                    <summary>Ваши проекты:</summary>
+                    {% if projects %}
+                        {% for project in projects %}
+                            <form action="{% url 'project' %}" method="get">
+                                <input type="hidden" value="{{project.project.pk}}" name="project_id">
+                                <button type="submit" class="a-btn project-btn">
+                                    {{project.project.title}}
+                                </button>
+                            </form>
+                        {% endfor %}
+
+                    {% else %}
+                        <p> У вас нет проектов </p>
+                    {% endif %}
+                </details>
             {% else %}
                 <p>Пожалуйста, авторизуйтесь на сайте для просмотра ваших проектов</p>
             {% endif %}
         </div>
         <div class="main-container">
             {% if request.user.is_authenticated %}
-                {% if title_project %}
-                    <div>
-                        <button id="addTask"> Добавить задачу</button>
-                    </div>
-                    {% for task in tasks_project %}
-                        <div class="task-container" id="task-container-{{ forloop.counter }}">
-                            <div class="title">{{ task.title }}</div>
-                            <div >
-                                {% if task.comment == '' %}
-                                    Нет комментариев
-                                {% else %}
-                                    Комментарий
-                                {% endif %}
+                {% if project_id %}
+                    <div class="container">
+                        <button id="btnShowModalTask" class="a-btn project-btn"> Добавить задачу</button>
+                        {% for task in tasks_project %}
+                            <div class="task-container">
+                                <div class="title">{{ task.title }}</div>
+                                <div class="is-ready">
+                                    {% if task.is_ready %}
+                                        Выполнено
+                                    {% else %}
+                                        {% if task.user.username and task.user.username == request.user.username%}
+                                            <form method="post" action="{% url 'Tasks' %}" class="update_is_ready">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="task-id" value="{{task.pk}}">
+                                                <input type="hidden" name="do" value="update_is_ready">
+                                                <button type="submit">Отметить выполнение</button>
+                                            </form>
+                                        {% else %}
+                                            Не выполнено
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                                <div >
+                                    {% if task.comment == '' %}
+                                        Нет комментариев
+                                    {% else %}
+                                        Комментарий
+                                    {% endif %}
+                                </div>
+                                <div> Дедлайн: {{task.deadline}}</div>
+                                <div class="worker" id="worker">
+                                    {% if task.user is None %}
+                                        Нет исполнителя
+                                        <form class="getWorkForm" method="post" action="{% url 'Tasks' %}">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="task-id" value="{{task.pk}}">
+                                            <input type="hidden" name="do" value="update_task_user">
+                                            <button type="submit" class="btn">Взять на исполнение</button>
+                                        </form>
+                                    {% else %}
+                                        Исполнитель: {{task.user}}
+                                    {% endif %}
+                                </div>
                             </div>
-                            <div> Дедлайн: {{task.deadline}}</div>
-                            <div class="worker" id="worker">
-                                {% if task.user is None %}
-                                    Нет исполнителя
-                                    <form class="getWorkForm" method="post" action="{% url 'project' title_project %}">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="task-id" value="{{task.pk}}">
-                                        <input type="hidden" name="container-id" value="{{ forloop.counter0 }}">
-                                        <button type="submit" class="btn">Взять на исполнение</button>
-                                    </form>
-                                {% else %}
-                                    Исполнитель: {{task.user}}
-                                {% endif %}
-                            </div>
-                        </div>
-                    {% endfor %}
+                        {% endfor %}
+                    {% else %}
+                        Выберите проект
+                    {% endif %}
                 {% else %}
-                    Выберите проект
+                    <p>Пожалуйста, авторизуйтесь на сайте для просмотра ваших проектов</p>
                 {% endif %}
-            {% else %}
-                <p>Пожалуйста, авторизуйтесь на сайте для просмотра ваших проектов</p>
-            {% endif %}
+            </div>
         </div>
     </div>
-    <dialog id="modal">
+    <dialog id="modalProject">
         <form method="post" id="addProject" action="{% url 'addProject' %}">{% csrf_token %}</form>
         <label>Название проекта:</label>
-        <input type="text" form="addProject" name="title"/> <br>
+        <input type="text" form="addProject" name="title_project"/> <br>
         <div class="modal-btn">
             <button type="submit" form="addProject" class="a-btn project-btn">Создать проект</button>
             <button type="submit" class="a-btn project-btn">Отмена</button>
         </div>
     </dialog>
+
+    <dialog id="modalTask">
+        <form method="post" id="addTask" action="{% url 'Tasks' %}">{% csrf_token %}</form>
+        <input type="hidden" form="addTask" name="do" value="create_task">
+        <input type="hidden" form="addTask" value="{{project_id}}" name="project_id">
+        <label> Название задачи:</label>
+        <input type="text" form="addTask" name="title_task" required aria-required="true"/> <br>
+        <label> Дедлайн:</label>
+        <input type="date" form="addTask" name="deadline" required aria-required="true"><br>
+        <label> Комментарий(необязательно): </label><br>
+        <input type="text" form="addTask" name="comment" class="comment"/> <br>
+        <div class="modal-btn">
+            <button type="submit" form="addTask" class="a-btn project-btn">Создать проект</button>
+            <button type="submit" class="a-btn project-btn">Отмена</button>
+        </div>
+    </dialog>
 {% endblock %}
 
-{% block js %}
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script>
-        $(".getWorkForm").each(function(index, element) {
-            $(element).submit(function(){
-                $.ajax({
-                    data: $(this).serialize(),
-                    type: 'POST',
-                    url:  $(this).attr('action'),
-                    success: function (response) {
-                        element.parentElement.innerHTML = 'Исполнитель: {{request.user.username}}';
-                    },
-                    error: function (response) {
-                        alert("Что-то пошло не так. Попробуйте позже.");
-                        console.log(response.responseJSON.errors)
-                    }
-                });
-                return false;
-            });
-        })
-
-        const modalElement = document.getElementById("modal");
-        $("#addProject").submit(function(e){
-            $.ajax({
-                data: $(this).serialize(),
-                type: 'POST',
-                url:  $(this).attr('action'),
-                success: function(response){
-                    modalElement.close();
-                    let btn = document.getElementById('btnShowModal');
-
-                    let newBtn = document.createElement('a');
-                    newBtn.setAttribute('class', 'a-btn project-btn');
-                    newBtn.setAttribute('href', response.title + '/');
-                    newBtn.innerHTML = response.title;
-
-                    parent = btn.parentElement;
-                    parent.insertBefore(newBtn, btn);
-                }
-            });
-            return false;
-        });
-
-
-        document.getElementById("btnShowModal").onclick = function(){
-            modalElement.showModal();
-        }
-
-    </script>
-{% endblock %}
