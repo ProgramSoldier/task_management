@@ -10,25 +10,37 @@ class ProjectView(View):
     template_name = 'projectsApp/Html/project.html'
 
     def get(self, request, *args, **kwargs):
+        """
+        Функция возвращает основную страницу проектов
+        """
         context = {}
-        project_id = request.GET.get('project_id', 0)
+        project_id = request.GET.get('project_id', 0)  # Получение id проекта
         if request.user.is_authenticated:
-            projects = Project_UserModel.objects.filter(user=request.user).select_related('project').order_by('project_id')
+            # Получение проектов пользователя
+            projects = Project_UserModel.objects.filter(user=request.user).select_related('project').order_by(
+                'project_id')
             if project_id:
                 if projects:
-                    if not projects.filter(project_id=project_id ):
-                        return render(request, 'mainApp/Html/error.html', status=404, context={'title':'Проект не найден',
-                                                                                          'message': 'Данный проект не найден'})
-                    users = Project_UserModel.objects.values('user__username').filter(project_id=project_id )
-                    tasks_project = TaskModel.objects.filter(project_id=project_id ).select_related('project', 'user').order_by('deadline', 'title')
+                    # Обработка запроса к недоступному проекту
+                    if not projects.filter(project_id=project_id):
+                        return render(request, 'mainApp/Html/error.html', status=404,
+                                      context={'title': 'Проект не найден',
+                                               'message': 'Данный проект не найден'})
+                    # Получение пользователей, которые состоят в проекте
+                    users = Project_UserModel.objects.values('user__username').filter(project_id=project_id)
+                    # Получение задач проекта с сортировкой по дедлайну и названию задачи
+                    tasks_project = TaskModel.objects.filter(project_id=project_id).select_related('user', 'project').order_by(
+                        'deadline', 'title')
                     context['tasks_project'] = tasks_project
                     context['project_id'] = project_id
                     context['users'] = users
             context['projects'] = projects
-            #context['title_project'] = title_project
         return render(request, self.template_name, context=context)
 
-    def post(self, request, title_project=None, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
+        """
+        Функция добавляет новый проект
+        """
         if request.POST:
             title = request.POST['title_project']
             if title:
@@ -43,11 +55,15 @@ class ProjectView(View):
 class TaskView(View):
     def post(self, request):
         do = request.POST['do']
+
+        # Обновление исполнителя задачи
         if do == 'update_task_user':
             data = request.POST
             # print(data)
             TaskModel.objects.filter(pk=data['task-id']).update(user=request.user)
             return JsonResponse({'user': request.user.username, 'task_id': data['task-id']}, status=200)
+
+        # Создание новой задачи
         elif do == "create_task":
             title = request.POST['title_task']
             deadline = request.POST['deadline']
@@ -64,6 +80,8 @@ class TaskView(View):
                 }
                 return JsonResponse(context, status=200)
             return JsonResponse({'massage': 'Название проекта не может быть пустым'}, status=400)
+
+        # Обновление статуса задачи
         elif do == 'update_is_ready':
             task_id = request.POST['task-id']
             TaskModel.objects.filter(pk=task_id).update(is_ready=True)
@@ -71,6 +89,35 @@ class TaskView(View):
         else:
             return JsonResponse({'massage': 'Что-то пошло не так'}, status=404)
 
+
+def addUserProject(request):
+    """
+    Функция добавляет нового пользователя в проект
+    """
+    if request.method == 'POST':
+        data = request.POST
+        try:
+            user = User.objects.get(username=data['username'])
+            check_user_in_project = Project_UserModel.objects.filter(user=user, project_id=data['project_id'])
+            # Проверка наличия пользователя в проекте
+            if check_user_in_project:
+                return JsonResponse({'message': 'Пользователь уже состоит в проекте'}, status=400)
+            # Добавление пользователя в проект
+            new_user_in_project = Project_UserModel(user=user, project_id=data['project_id'])
+            new_user_in_project.save()
+            return JsonResponse({'username': data['username']}, status=200)
+        # Обработка ошибки ненахождения пользователя в системе
+        except User.DoesNotExist:
+            return JsonResponse({'message': 'Пользователь не найден'}, status=404)
+        # Обработка непредвиденных ошибок
+        except:
+            return JsonResponse({'message': 'Что-то пошло не так. Попробуйте позже'}, status=404)
+    # Обработка get запроса
+    return render(request, 'mainApp/Html/error.html', status=404, context={'title': '404',
+                                                                           'message': 'Страница не найдена.'})
+
+
+# Функция для тестирования
 def test(request):
     context = {
     }

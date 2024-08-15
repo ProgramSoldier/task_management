@@ -11,18 +11,17 @@
 {% endblock %}
 
 {% block main %}
-    <input type="hidden" value="{{project_id}}">
+    <input type="hidden" value="{{project_id}}" id="project_id">
     <div class="base-container">
         <div class="side-menu">
             {% if request.user.is_authenticated %}
                 <button type="submit" class="a-btn project-btn" id="btnShowModalProject">Добавить проект</button>
                 {% if project_id %}
-                    <details>
+                    <details id="user_in_project">
                         <summary>Участники проекта:</summary>
                         {% for user in users %}
                             <p>{{user.user__username}}</p>
                         {% endfor %}
-
                     </details>
                 {% endif %}
                 <details>
@@ -49,7 +48,10 @@
             {% if request.user.is_authenticated %}
                 {% if project_id %}
                     <div class="container">
-                        <button id="btnShowModalTask" class="a-btn project-btn"> Добавить задачу</button>
+                        <div>
+                            <button id="btnShowModalTask" class="a-btn project-btn"> Добавить задачу</button>
+                            <button id="btnShowModalAddUser" class="a-btn project-btn"> Добавить пользователя</button>
+                        </div>
                         {% for task in tasks_project %}
                             <div class="task-container">
                                 <div class="title">{{ task.title }}</div>
@@ -107,7 +109,7 @@
         <input type="text" form="addProject" name="title_project"/> <br>
         <div class="modal-btn">
             <button type="submit" form="addProject" class="a-btn project-btn">Создать проект</button>
-            <button type="submit" class="a-btn project-btn">Отмена</button>
+            <button type="submit" id="CloseModalProject" class="a-btn project-btn">Отмена</button>
         </div>
     </dialog>
 
@@ -122,8 +124,19 @@
         <label> Комментарий(необязательно): </label><br>
         <input type="text" form="addTask" name="comment" class="comment"/> <br>
         <div class="modal-btn">
-            <button type="submit" form="addTask" class="a-btn project-btn">Создать проект</button>
-            <button type="submit" class="a-btn project-btn">Отмена</button>
+            <button type="submit" form="addTask" class="a-btn project-btn">Добавить задачу</button>
+            <button type="submit" id='CloseModalTask' class="a-btn project-btn">Отмена</button>
+        </div>
+    </dialog>
+
+    <dialog id="modalAddUser">
+        <form method="post" id="addUser" action="{% url 'addUserProject' %}">{% csrf_token %}</form>
+        <label>Имя пользователя:</label>
+        <input type="text" form="addUser" name="username"/> <br>
+        <div id="msg-err"></div>
+        <div class="modal-btn">
+            <button type="submit" form="addUser" class="a-btn project-btn">Добавить пользователя</button>
+            <button type="submit" id="CloseModalAddUser" class="a-btn project-btn">Отмена</button>
         </div>
     </dialog>
 {% endblock %}

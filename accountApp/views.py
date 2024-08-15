@@ -15,7 +15,6 @@ class CastomLoginView(LoginView):
         return reverse_lazy('mainPage')
 
 class RegisterView(View):
-
     def get(self, request):
         form = UserCreationForm()
         context = {

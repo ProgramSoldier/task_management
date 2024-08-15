@@ -36,3 +36,7 @@ class Project_UserModel(models.Model):
         return res
 
     objects = models.Manager()
+
+
+class Temporary_links(models.Model):
+    pass

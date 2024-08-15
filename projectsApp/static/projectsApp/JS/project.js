@@ -22,15 +22,40 @@ function checkComment(comment){
     return "Комментарий";
 }
 
+
 const csrfToken = document.getElementsByName('csrfmiddlewaretoken')[0].value
+
+
 const modalProjectElement = document.getElementById("modalProject");
+
 document.getElementById("btnShowModalProject").onclick = function(){
     modalProjectElement.showModal();
 }
 
+document.getElementById("CloseModalProject").onclick = function(){
+    modalProjectElement.close();
+}
+
+
 const modalTaskElement = document.getElementById("modalTask");
+
 document.getElementById("btnShowModalTask").onclick = function(){
     modalTaskElement.showModal();
+}
+
+document.getElementById("CloseModalTask").onclick = function(){
+    modalTaskElement.close();
+}
+
+
+const modalAddUserElement = document.getElementById("modalAddUser");
+
+document.getElementById("btnShowModalAddUser").onclick = function(){
+    modalAddUserElement.showModal();
+}
+
+document.getElementById("CloseModalAddUser").onclick = function(){
+    modalAddUserElement.close();
 }
 
 // Навешиваем функцию на все формы
@@ -77,7 +102,6 @@ $("#addTask").submit(function(e){
             modalTaskElement.close();
             let addBtn = document.getElementById('btnShowModalTask')
             let parent = addBtn.parentElement;
-            let csrfToken = document.getElementsByName('csrfmiddlewaretoken')[0].value
 
             let newTask = document.createElement('div');
             newTask.setAttribute('class', 'task-container');
@@ -96,6 +120,30 @@ $("#addTask").submit(function(e){
                                 </div>`
             addBtn.parentNode.insertBefore(newTask, addBtn.nextSibling);
             getWork(newTask.getElementsByClassName('getWorkForm')[0]);
+        },
+        error: function (response) {
+                 alert("Что-то пошло не так. Попробуйте позже.");
+            }
+    });
+    return false;
+});
+
+
+//Добавление пользователя в проект
+$("#addUser").submit(function(e){
+    $.ajax({
+        data: $(this).serialize() + '&project_id='+ document.getElementById("project_id").value,
+        type: 'POST',
+        url:  $(this).attr('action'),
+        success: function(response){
+            let p = document.createElement('p');
+            p.innerHTML = response['username'];
+            document.getElementById("user_in_project").append(p);
+            modalAddUserElement.close();
+        },
+        error: function (response) {
+            console.log(response);
+            document.getElementById("msg-err").innerHTML = response.responseJSON['message'];
         }
     });
     return false;
