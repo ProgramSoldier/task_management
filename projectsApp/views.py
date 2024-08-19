@@ -25,7 +25,8 @@ class ProjectView(View):
                     if not projects.filter(project_id=project_id):
                         return render(request, 'mainApp/Html/error.html', status=404,
                                       context={'title': 'Проект не найден',
-                                               'message': 'Данный проект не найден'})
+                                               'message': 'Данный проект не найден',
+                                               'title_page': 'Ошибка'})
                     # Получение пользователей, которые состоят в проекте
                     users = Project_UserModel.objects.values('user__username').filter(project_id=project_id)
                     # Получение задач проекта с сортировкой по дедлайну и названию задачи
@@ -35,6 +36,7 @@ class ProjectView(View):
                     context['project_id'] = project_id
                     context['users'] = users
             context['projects'] = projects
+            context['title_page'] = projects.get(project_id=project_id).project.title
         return render(request, self.template_name, context=context)
 
     def post(self, request, *args, **kwargs):
@@ -114,7 +116,8 @@ def addUserProject(request):
             return JsonResponse({'message': 'Что-то пошло не так. Попробуйте позже'}, status=404)
     # Обработка get запроса
     return render(request, 'mainApp/Html/error.html', status=404, context={'title': '404',
-                                                                           'message': 'Страница не найдена.'})
+                                                                           'message': 'Страница не найдена.',
+                                                                           'title_page': 'Ошибка'})
 
 
 # Функция для тестирования

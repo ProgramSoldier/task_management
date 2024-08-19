@@ -1,17 +1,9 @@
+body{
+    min-height: 100vh;
+}
 .base-container{
     display: flex;
-    flex-wrap: wrap;
-    height: 90vh;
-}
-
-.side-menu{
-    background-color: #00ABE1;
-    max-width: 25%;
-    min-width: 15%;
-    overflow:auto;
-    word-break: break-all;
-}
-
-.main-container{
-    max-width: 75%;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
 }

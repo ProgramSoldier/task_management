@@ -7,11 +7,8 @@
 
 {% block main %}
     <div class="base-container">
-        <div class="side-menu">
-            Боковое меню
-        </div>
-        <div class="main-container">
-            Основное меню
-        </div>
+        <a href="{% url 'project' %}"  class="a-btn nav-btn">
+                        Ваши<br/>проекты
+        </a>
     </div>
 {% endblock %}

@@ -5,7 +5,7 @@ class IndexView(View):
     template_name = 'mainApp/Html/index.html'
 
     def get(self, request, *args, **kwargs):
-        return render(request, self.template_name)
+        return render(request, self.template_name, context={'title_page': 'Главная страница'})
 
 def tr_handler404(request, exception):
     """

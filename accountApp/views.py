@@ -14,11 +14,17 @@ class CastomLoginView(LoginView):
     def get_success_url(self):
         return reverse_lazy('mainPage')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title_page'] = 'Авторизация'
+        return context
+
 class RegisterView(View):
     def get(self, request):
         form = UserCreationForm()
         context = {
-            'form': form
+            'form': form,
+            'title_page': 'Регистрация'
         }
         return render(request, 'accountApp/Html/register.html', context=context)
 
@@ -30,6 +36,7 @@ class RegisterView(View):
         print(form.non_field_errors)
 
         context = {
-            'form': form
+            'form': form,
+            'title_page': 'Регистрация'
         }
         return render(request, 'accountApp/Html/register.html', context=context)

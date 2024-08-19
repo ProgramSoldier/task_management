@@ -77,15 +77,14 @@ $("#addProject").submit(function(e){
         url:  $(this).attr('action'),
         success: function(response){
             modalProjectElement.close();
-            let btn = document.getElementById('btnShowModalProject');
+            let container = document.getElementById('projects');
 
             let newBtn = document.createElement('a');
             newBtn.setAttribute('class', 'a-btn project-btn');
             newBtn.setAttribute('href', response.title + '/');
             newBtn.innerHTML = response.title;
 
-            parent = btn.parentElement;
-            parent.insertBefore(newBtn, btn);
+            container.append(newBtn);
         }
     });
     return false;
